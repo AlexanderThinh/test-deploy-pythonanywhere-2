@@ -1,0 +1,156 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+{% block content %}
+
+    <h1 class="stat_title">Thống Kê Doanh Thu Tour Du Lịch</h1>
+    <form method="get" action="/admin/tour_stats/" class="form_filter">
+        <div class="form-group">
+          <input name="day" class="search_input" placeholder="Nhập ngày..." />
+        </div>
+
+        <div class="form-group">
+          <input name="month" class="search_input" placeholder="Nhập tháng..." />
+        </div>
+
+        <div class="form-group">
+          <input name="year" class="search_input" placeholder="Nhập năm..." />
+        </div>
+
+        <input id="btnSubmit" type="submit" value="Thống kê" class="btn_stat">
+    </form>
+
+    <div class="stat_input">
+        <p class="stat_input_day">Day: {{ day }}</p>
+        <p class="stat_input_day">Month: {{ month }}</p>
+        <p class="stat_input_day">Year: {{ year }}</p>
+    </div>
+
+    <div class="stat_result">
+        <table class="col-3">
+                <tr>
+                    <th colspan="5"><h3>Thống Kê Tour Du Lịch</h3></th>
+                </tr>
+
+                <tr>
+                    <th>Mã tour</th>
+                    <th>Tên tour</th>
+                    <th>Doanh thu</th>
+                </tr>
+
+                {% for i in tour_total_money %}
+                <tr>
+                    <td>{{ i.id }}</td>
+                    <td>{{ i.ten_tour }}</td>
+                    <td>{{ i.sum }}</td>
+                </tr>
+                {% endfor %}
+
+        </table>
+
+        <div class="col-7">
+          <canvas id="myChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('myChart').getContext('2d')
+        labels = []
+        data = []
+
+
+
+        {% for element in tour_total_money %}
+            labels.push('{{ element.ten_tour }}')
+            data.push('{{ element.sum }}')
+        {% endfor %}
+
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Thống kê doanh thu tour du lịch',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <style>
+      .stat_title {
+        margin: 40px 0;
+        color: green;
+        text-align: center;
+        font-size: 30px;
+        font-weight: bold;
+      }
+      .form_filter {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        position: absolute;
+        top: 50px;
+        background: #264b5d;
+        left: 0;
+        right: 0;
+        padding: 10px 20px
+      }
+      .stat_result {
+        display: flex;
+        align-items: self-start;
+      }
+      .form-group {
+        margin: 0 10px;
+      }
+      .btn_stat {
+        background-color: green !important;
+        cursor: pointer !important;
+      }
+      .search_input {
+        outline: none;
+        border-radius: 4px;
+        padding: 8px;
+      }
+      .stat_input {
+        display: flex;
+        margin: 20px 0;
+      }
+      .col-3 {
+        width: 30%;
+      }
+      .col-7 {
+        width: 70%;
+        padding: 0 50px;
+      }
+      .stat_input_day {
+        margin: 0 40px;
+        font-size: 18px;
+      }
+    </style>
+{% endblock %}
